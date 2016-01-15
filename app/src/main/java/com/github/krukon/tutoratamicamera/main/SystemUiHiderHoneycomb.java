@@ -1,4 +1,4 @@
-package com.github.krukon.tutoratamicamera.util;
+package com.github.krukon.tutoratamicamera.main;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
