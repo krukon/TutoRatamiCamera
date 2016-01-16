@@ -3,6 +3,7 @@ package com.github.krukon.tutoratamicamera.effects;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.renderscript.Allocation;
 import android.renderscript.Element;
@@ -45,13 +46,22 @@ public class AbstractFilter {
 
     public Bitmap execute(byte[] data) {
         Bitmap outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
-        allocationOut = Allocation.createFromBitmap(rs, outputBitmap);
 
-        allocationYUV.copyFrom(data);
-        intrinsicYuvToRGB.setInput(allocationYUV);
-        intrinsicYuvToRGB.forEach(allocationOut);
+        for (int i = 1; i < 100; ++i)
+            for (int j = 1; j < 100; ++j)
+                outputBitmap.setPixel(i, j, Color.argb(1, 255, 255, 0));
 
-        allocationOut.syncAll(Allocation.USAGE_SHARED);
+        System.out.println("Process: " + outputBitmap.getPixel(1, 1));
+//        allocationOut = Allocation.createFromBitmap(rs, outputBitmap);
+//
+//        allocationYUV.copyFrom(data);
+//        intrinsicYuvToRGB.setInput(allocationYUV);
+//        intrinsicYuvToRGB.forEach(allocationOut);
+//
+////        allocationOut.syncAll(Allocation.USAGE_SHARED);
+//
+//        System.out.println(outputBitmap.getPixel(1, 1));
+////        System.out.println(allocationOut.getBytesSize());
 
         return outputBitmap;
     }

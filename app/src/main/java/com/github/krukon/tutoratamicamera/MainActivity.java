@@ -4,7 +4,10 @@ import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.ImageFormat;
 import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -49,15 +52,30 @@ public class MainActivity extends Activity implements Camera.PreviewCallback {
         CameraService.shutdownCamera();
     }
 
+    private class ProcessData extends AsyncTask<byte[], Void, Boolean>
+    {
+        private Bitmap bm;
+
+        @Override
+        protected Boolean doInBackground(byte[]... args)
+        {
+            bm = getCurrentFilter().execute(args[0]);
+            return true;
+        }
+        protected void onPostExecute(Boolean result) {
+            renderedPreview.setImageBitmap(bm);
+            renderedPreview.setVisibility(View.VISIBLE);
+            renderedPreview.invalidate();
+            rendering = false;
+        }
+    }
+
     @Override
     public void onPreviewFrame(byte[] data, Camera camera) {
         if (rendering) return;
 
         rendering = true;
-        Bitmap bm = getCurrentFilter().execute(data); //TODO - should be async
-        renderedPreview.setImageBitmap(bm);
-        renderedPreview.invalidate();
-        rendering = false;
+        new ProcessData().execute(data);
     }
 
     public AbstractFilter getCurrentFilter() {
