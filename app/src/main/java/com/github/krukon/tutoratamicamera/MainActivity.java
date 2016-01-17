@@ -18,13 +18,13 @@ import android.graphics.Bitmap;
 
 import com.github.krukon.tutoratamicamera.camera.CameraService;
 import com.github.krukon.tutoratamicamera.effects.AbstractFilter;
+import com.github.krukon.tutoratamicamera.effects.BlurFilter;
 import com.github.krukon.tutoratamicamera.effects.NormalFilter;
 
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends Activity implements Camera.PreviewCallback, SurfaceHolder.Callback {
 
-    private Camera camera;
     private ImageView outputImageView;
 
     private List<AbstractFilter> filters;
@@ -37,12 +37,12 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        camera = CameraService.getCamera();
-        int imageWidth = camera.getParameters().getPreviewSize().width;
-        int imageHeight = camera.getParameters().getPreviewSize().height;
+        int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
+        int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
 
         filters = new ArrayList<>();
         filters.add(new NormalFilter(imageWidth, imageHeight, this));
+        filters.add(new BlurFilter(imageWidth, imageHeight, this));
 
         outputImageView = (ImageView) findViewById(R.id.outputImageView);
         SurfaceView surView = (SurfaceView) findViewById(R.id.inputSurfaceView);
@@ -56,6 +56,12 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
                 nextFilter();
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        CameraService.shutdownCamera();
     }
 
     private class ProcessData extends AsyncTask<byte[], Void, Boolean> {
@@ -94,9 +100,9 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         try {
-            camera.setPreviewCallback(this);
-            camera.setPreviewDisplay(holder);
-            camera.startPreview();
+            CameraService.getCamera().setPreviewCallback(this);
+            CameraService.getCamera().setPreviewDisplay(holder);
+            CameraService.getCamera().startPreview();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,10 +113,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
 
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
-        camera.stopPreview();
-        camera.setPreviewCallback(null);
-        camera.release();
-        camera = null;
+        CameraService.shutdownCamera();
     }
 
 }
