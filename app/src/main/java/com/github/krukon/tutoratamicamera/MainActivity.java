@@ -1,84 +1,116 @@
 package com.github.krukon.tutoratamicamera;
 
-import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.ImageFormat;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
-import com.github.krukon.tutoratamicamera.camera.CameraPreview;
+import android.view.View;
+import android.widget.*;
+import android.app.Activity;
+import android.graphics.Bitmap;
+
 import com.github.krukon.tutoratamicamera.camera.CameraService;
 import com.github.krukon.tutoratamicamera.effects.AbstractFilter;
+import com.github.krukon.tutoratamicamera.effects.NormalFilter;
 
-public class MainActivity extends Activity implements Camera.PreviewCallback {
+
+@SuppressWarnings("deprecation")
+public class MainActivity extends Activity implements Camera.PreviewCallback, SurfaceHolder.Callback {
+
     private Camera camera;
-    private CameraPreview hiddenPreview;
-    private ImageView renderedPreview;
+    private ImageView outputImageView;
+
+    private List<AbstractFilter> filters;
+    private int currentFilterId;
 
     private volatile boolean rendering;
 
-    private AbstractFilter[] filters;
-    private int currentFilterId;
-
     @Override
-    public void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
         camera = CameraService.getCamera();
-        camera.setPreviewCallback(this);
+        int imageWidth = camera.getParameters().getPreviewSize().width;
+        int imageHeight = camera.getParameters().getPreviewSize().height;
 
-        filters = new AbstractFilter[] {new AbstractFilter(camera.getParameters().getPreviewSize().width, camera.getParameters().getPreviewSize().height, this)};
+        filters = new ArrayList<>();
+        filters.add(new NormalFilter(imageWidth, imageHeight, this));
 
-        hiddenPreview = new CameraPreview(camera, this);
-        FrameLayout previewLayout = (FrameLayout) findViewById(R.id.camera_preview);
-        previewLayout.addView(hiddenPreview);
+        outputImageView = (ImageView) findViewById(R.id.outputImageView);
+        SurfaceView surView = (SurfaceView) findViewById(R.id.inputSurfaceView);
+        SurfaceHolder surHolder = surView.getHolder();
+        surHolder.addCallback(this);
 
-        renderedPreview = (ImageView)findViewById(R.id.outputImageView);
+        Button nextFilterButton = (Button) findViewById(R.id.nextFilterButton);
+        nextFilterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                nextFilter();
+            }
+        });
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        CameraService.shutdownCamera();
-    }
-
-    private class ProcessData extends AsyncTask<byte[], Void, Boolean>
-    {
-        private Bitmap bm;
+    private class ProcessData extends AsyncTask<byte[], Void, Boolean> {
+        private Bitmap outputBitmap;
 
         @Override
-        protected Boolean doInBackground(byte[]... args)
-        {
-            bm = getCurrentFilter().execute(args[0]);
+        protected Boolean doInBackground(byte[]... args) {
+            outputBitmap = currentFilter().execute(args[0]);
             return true;
         }
         protected void onPostExecute(Boolean result) {
-            renderedPreview.setImageBitmap(bm);
-            renderedPreview.setVisibility(View.VISIBLE);
-            renderedPreview.invalidate();
+            outputImageView.setImageBitmap(outputBitmap);
+            outputImageView.invalidate();
             rendering = false;
         }
     }
-
     @Override
-    public void onPreviewFrame(byte[] data, Camera camera) {
-        if (rendering) return;
+    public void onPreviewFrame(byte[] data, Camera arg1) {
+        if (rendering) {
+            return;
+        }
 
         rendering = true;
         new ProcessData().execute(data);
     }
 
-    public AbstractFilter getCurrentFilter() {
-        return filters[currentFilterId];
+    private AbstractFilter currentFilter() {
+        return filters.get(currentFilterId);
     }
+
+    private void nextFilter() {
+        ++currentFilterId;
+        if (filters.size() == currentFilterId) currentFilterId = 0;
+    }
+
+    @Override
+    public void surfaceCreated(SurfaceHolder holder) {
+        try {
+            camera.setPreviewCallback(this);
+            camera.setPreviewDisplay(holder);
+            camera.startPreview();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
+
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        camera.stopPreview();
+        camera.setPreviewCallback(null);
+        camera.release();
+        camera = null;
+    }
+
 }
