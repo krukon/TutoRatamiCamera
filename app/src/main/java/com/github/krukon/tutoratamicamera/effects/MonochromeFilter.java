@@ -4,19 +4,20 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.renderscript.Allocation;
 
-import com.github.krukon.tutoratamicamera.ScriptC_negative;
+import com.github.krukon.tutoratamicamera.ScriptC_monochrome;
 
 /**
- * Created by jakub on 17.01.16.
+ * Created by krukon on 17.01.2016.
  */
-public class NegativeFilter extends AbstractFilter {
+public class MonochromeFilter extends AbstractFilter {
 
-    private ScriptC_negative script;
+    private ScriptC_monochrome script;
 
-    public NegativeFilter(int imageWidth, int imageHeight, Context context) {
+    public MonochromeFilter(int imageWidth, int imageHeight, Context context) {
         super(imageWidth, imageHeight, context);
 
-        script = new ScriptC_negative(rs);
+        script = new ScriptC_monochrome(rs);
+
         script.set_imageWidth(imageWidth);
         script.set_imageHeight(imageHeight);
         script.set_script(script);
@@ -27,6 +28,7 @@ public class NegativeFilter extends AbstractFilter {
     @Override
     public Bitmap execute(byte[] data) {
         allocationYUV.copyFrom(data);
+
         intrinsicYuvToRGB.setInput(allocationYUV);
         intrinsicYuvToRGB.forEach(allocationIn);
 
@@ -36,5 +38,4 @@ public class NegativeFilter extends AbstractFilter {
 
         return outputBitmap;
     }
-
 }

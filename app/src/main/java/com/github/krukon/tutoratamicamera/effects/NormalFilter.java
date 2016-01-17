@@ -15,9 +15,6 @@ public class NormalFilter extends AbstractFilter {
 
     @Override
     public Bitmap execute(byte[] data) {
-        Bitmap outputBitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);
-        Allocation allocationOut = Allocation.createFromBitmap(rs, outputBitmap);
-
         allocationYUV.copyFrom(data);
         intrinsicYuvToRGB.setInput(allocationYUV);
         intrinsicYuvToRGB.forEach(allocationOut);

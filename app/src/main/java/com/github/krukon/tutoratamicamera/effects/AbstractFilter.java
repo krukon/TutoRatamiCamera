@@ -22,6 +22,9 @@ public abstract class AbstractFilter {
     protected ScriptIntrinsicYuvToRGB intrinsicYuvToRGB;
 
     protected Allocation allocationYUV;
+    protected Allocation allocationOut;
+    protected Allocation allocationIn;
+    protected Bitmap outputBitmap;
 
     public AbstractFilter(int imageWidth, int imageHeight, Context context) {
         this.imageWidth = imageWidth;
@@ -34,6 +37,9 @@ public abstract class AbstractFilter {
         allocationYUV = Allocation.createTyped(rs, typeYUV.setX(imageWidth).setY(imageHeight).create(), Allocation.USAGE_SCRIPT);
 
         intrinsicYuvToRGB = ScriptIntrinsicYuvToRGB.create(rs, Element.U8_4(rs));
+        outputBitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);
+        allocationOut = Allocation.createFromBitmap(rs, outputBitmap);
+        allocationIn =  Allocation.createTyped(rs, allocationOut.getType(), Allocation.USAGE_SCRIPT);
     }
 
     public abstract Bitmap execute(byte[] data);

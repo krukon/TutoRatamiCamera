@@ -11,32 +11,28 @@ import android.renderscript.ScriptIntrinsicBlur;
  */
 public class BlurFilter extends AbstractFilter {
 
+    private ScriptIntrinsicBlur intrinsicBlur;
     private float radius = 15f;
 
     public BlurFilter(int imageWidth, int imageHeight, Context context) {
         super(imageWidth, imageHeight, context);
+        intrinsicBlur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
+        intrinsicBlur.setRadius(radius);
     }
 
     public BlurFilter withRadius(float radius) {
         this.radius = radius;
+        intrinsicBlur.setRadius(radius);
         return this;
     }
 
     @Override
     public Bitmap execute(byte[] data) {
-        Bitmap outputBitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);
-        Allocation allocationOut = Allocation.createFromBitmap(rs, outputBitmap);
-
-        Allocation allocationBlur =  Allocation.createTyped(rs, allocationOut.getType(), Allocation.USAGE_SCRIPT);
-
-        ScriptIntrinsicBlur intrinsicBlur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
-        intrinsicBlur.setRadius(radius);
-
         allocationYUV.copyFrom(data);
         intrinsicYuvToRGB.setInput(allocationYUV);
-        intrinsicYuvToRGB.forEach(allocationBlur);
+        intrinsicYuvToRGB.forEach(allocationIn);
 
-        intrinsicBlur.setInput(allocationBlur);
+        intrinsicBlur.setInput(allocationIn);
         intrinsicBlur.forEach(allocationOut);
 
         allocationOut.syncAll(Allocation.USAGE_SHARED);

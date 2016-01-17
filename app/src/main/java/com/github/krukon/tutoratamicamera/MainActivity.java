@@ -1,27 +1,28 @@
 package com.github.krukon.tutoratamicamera;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
+import android.app.Activity;
+import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
 import android.view.View;
-import android.widget.*;
-import android.app.Activity;
-import android.graphics.Bitmap;
+import android.view.WindowManager;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.github.krukon.tutoratamicamera.camera.CameraService;
 import com.github.krukon.tutoratamicamera.effects.AbstractFilter;
 import com.github.krukon.tutoratamicamera.effects.BlurFilter;
+import com.github.krukon.tutoratamicamera.effects.MonochromeFilter;
 import com.github.krukon.tutoratamicamera.effects.NegativeFilter;
 import com.github.krukon.tutoratamicamera.effects.NormalFilter;
 import com.github.krukon.tutoratamicamera.effects.SepiaFilter;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @SuppressWarnings("deprecation")
@@ -38,11 +39,13 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
         int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
         int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
 
         filters = new ArrayList<>();
+        filters.add(new MonochromeFilter(imageWidth, imageHeight, this));
         filters.add(new NegativeFilter(imageWidth, imageHeight, this));
         filters.add(new SepiaFilter(imageWidth, imageHeight, this));
         filters.add(new NormalFilter(imageWidth, imageHeight, this));
