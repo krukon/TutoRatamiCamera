@@ -1,159 +1,116 @@
 package com.github.krukon.tutoratamicamera;
 
-import com.github.krukon.tutoratamicamera.util.SystemUiHider;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.os.Build;
+import android.hardware.Camera;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.view.MotionEvent;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
+
 import android.view.View;
+import android.widget.*;
+import android.app.Activity;
+import android.graphics.Bitmap;
 
-/**
- * An example full-screen activity that shows and hides the system UI (i.e.
- * status bar and navigation/system bar) with user interaction.
- *
- * @see SystemUiHider
- */
-public class MainActivity extends Activity {
-    /**
-     * Whether or not the system UI should be auto-hidden after
-     * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
-     */
-    private static final boolean AUTO_HIDE = true;
+import com.github.krukon.tutoratamicamera.camera.CameraService;
+import com.github.krukon.tutoratamicamera.effects.AbstractFilter;
+import com.github.krukon.tutoratamicamera.effects.NormalFilter;
 
-    /**
-     * If {@link #AUTO_HIDE} is set, the number of milliseconds to wait after
-     * user interaction before hiding the system UI.
-     */
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
-    /**
-     * If set, will toggle the system UI visibility upon interaction. Otherwise,
-     * will show the system UI visibility upon interaction.
-     */
-    private static final boolean TOGGLE_ON_CLICK = true;
+@SuppressWarnings("deprecation")
+public class MainActivity extends Activity implements Camera.PreviewCallback, SurfaceHolder.Callback {
 
-    /**
-     * The flags to pass to {@link SystemUiHider#getInstance}.
-     */
-    private static final int HIDER_FLAGS = SystemUiHider.FLAG_HIDE_NAVIGATION;
+    private Camera camera;
+    private ImageView outputImageView;
 
-    /**
-     * The instance of the {@link SystemUiHider} for this activity.
-     */
-    private SystemUiHider mSystemUiHider;
+    private List<AbstractFilter> filters;
+    private int currentFilterId;
+
+    private volatile boolean rendering;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         setContentView(R.layout.activity_main);
 
-        final View controlsView = findViewById(R.id.fullscreen_content_controls);
-        final View contentView = findViewById(R.id.fullscreen_content);
+        camera = CameraService.getCamera();
+        int imageWidth = camera.getParameters().getPreviewSize().width;
+        int imageHeight = camera.getParameters().getPreviewSize().height;
 
-        // Set up an instance of SystemUiHider to control the system UI for
-        // this activity.
-        mSystemUiHider = SystemUiHider.getInstance(this, contentView, HIDER_FLAGS);
-        mSystemUiHider.setup();
-        mSystemUiHider
-                .setOnVisibilityChangeListener(new SystemUiHider.OnVisibilityChangeListener() {
-                    // Cached values.
-                    int mControlsHeight;
-                    int mShortAnimTime;
+        filters = new ArrayList<>();
+        filters.add(new NormalFilter(imageWidth, imageHeight, this));
 
-                    @Override
-                    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-                    public void onVisibilityChange(boolean visible) {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-                            // If the ViewPropertyAnimator API is available
-                            // (Honeycomb MR2 and later), use it to animate the
-                            // in-layout UI controls at the bottom of the
-                            // screen.
-                            if (mControlsHeight == 0) {
-                                mControlsHeight = controlsView.getHeight();
-                            }
-                            if (mShortAnimTime == 0) {
-                                mShortAnimTime = getResources().getInteger(
-                                        android.R.integer.config_shortAnimTime);
-                            }
-                            controlsView.animate()
-                                    .translationY(visible ? 0 : mControlsHeight)
-                                    .setDuration(mShortAnimTime);
-                        } else {
-                            // If the ViewPropertyAnimator APIs aren't
-                            // available, simply show or hide the in-layout UI
-                            // controls.
-                            controlsView.setVisibility(visible ? View.VISIBLE : View.GONE);
-                        }
+        outputImageView = (ImageView) findViewById(R.id.outputImageView);
+        SurfaceView surView = (SurfaceView) findViewById(R.id.inputSurfaceView);
+        SurfaceHolder surHolder = surView.getHolder();
+        surHolder.addCallback(this);
 
-                        if (visible && AUTO_HIDE) {
-                            // Schedule a hide().
-                            delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                        }
-                    }
-                });
-
-        // Set up the user interaction to manually show or hide the system UI.
-        contentView.setOnClickListener(new View.OnClickListener() {
+        Button nextFilterButton = (Button) findViewById(R.id.nextFilterButton);
+        nextFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (TOGGLE_ON_CLICK) {
-                    mSystemUiHider.toggle();
-                } else {
-                    mSystemUiHider.show();
-                }
+            public void onClick(View v) {
+                nextFilter();
             }
         });
+    }
 
-        // Upon interacting with UI controls, delay any scheduled hide()
-        // operations to prevent the jarring behavior of controls going away
-        // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+    private class ProcessData extends AsyncTask<byte[], Void, Boolean> {
+        private Bitmap outputBitmap;
+
+        @Override
+        protected Boolean doInBackground(byte[]... args) {
+            outputBitmap = currentFilter().execute(args[0]);
+            return true;
+        }
+        protected void onPostExecute(Boolean result) {
+            outputImageView.setImageBitmap(outputBitmap);
+            outputImageView.invalidate();
+            rendering = false;
+        }
+    }
+    @Override
+    public void onPreviewFrame(byte[] data, Camera arg1) {
+        if (rendering) {
+            return;
+        }
+
+        rendering = true;
+        new ProcessData().execute(data);
+    }
+
+    private AbstractFilter currentFilter() {
+        return filters.get(currentFilterId);
+    }
+
+    private void nextFilter() {
+        ++currentFilterId;
+        if (filters.size() == currentFilterId) currentFilterId = 0;
     }
 
     @Override
-    protected void onPostCreate(Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
-
-        // Trigger the initial hide() shortly after the activity has been
-        // created, to briefly hint to the user that UI controls
-        // are available.
-        delayedHide(100);
+    public void surfaceCreated(SurfaceHolder holder) {
+        try {
+            camera.setPreviewCallback(this);
+            camera.setPreviewDisplay(holder);
+            camera.startPreview();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
+    @Override
+    public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {}
 
-    /**
-     * Touch listener to use for in-layout UI controls to delay hiding the
-     * system UI. This is to prevent the jarring behavior of controls going away
-     * while interacting with activity UI.
-     */
-    View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            if (AUTO_HIDE) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-            }
-            return false;
-        }
-    };
-
-    Handler mHideHandler = new Handler();
-    Runnable mHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mSystemUiHider.hide();
-        }
-    };
-
-    /**
-     * Schedules a call to hide() in [delay] milliseconds, canceling any
-     * previously scheduled calls.
-     */
-    private void delayedHide(int delayMillis) {
-        mHideHandler.removeCallbacks(mHideRunnable);
-        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    @Override
+    public void surfaceDestroyed(SurfaceHolder holder) {
+        camera.stopPreview();
+        camera.setPreviewCallback(null);
+        camera.release();
+        camera = null;
     }
+
 }
