@@ -19,6 +19,7 @@ import android.graphics.Bitmap;
 import com.github.krukon.tutoratamicamera.camera.CameraService;
 import com.github.krukon.tutoratamicamera.effects.AbstractFilter;
 import com.github.krukon.tutoratamicamera.effects.BlurFilter;
+import com.github.krukon.tutoratamicamera.effects.NegativeFilter;
 import com.github.krukon.tutoratamicamera.effects.NormalFilter;
 import com.github.krukon.tutoratamicamera.effects.SepiaFilter;
 
@@ -42,6 +43,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
 
         filters = new ArrayList<>();
+        filters.add(new NegativeFilter(imageWidth, imageHeight, this));
         filters.add(new SepiaFilter(imageWidth, imageHeight, this));
         filters.add(new NormalFilter(imageWidth, imageHeight, this));
         filters.add(new BlurFilter(imageWidth, imageHeight, this));
