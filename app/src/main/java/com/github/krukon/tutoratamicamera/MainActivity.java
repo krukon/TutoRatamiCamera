@@ -62,11 +62,12 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         SurfaceHolder surHolder = surView.getHolder();
         surHolder.addCallback(this);
 
-        Button nextFilterButton = (Button) findViewById(R.id.nextFilterButton);
+        final Button nextFilterButton = (Button) findViewById(R.id.nextFilterButton);
         nextFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 nextFilter();
+                nextFilterButton.setText(filters.get(currentFilterId).getName());
             }
         });
     }

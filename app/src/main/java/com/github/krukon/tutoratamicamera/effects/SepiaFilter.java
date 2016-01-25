@@ -37,4 +37,9 @@ public class SepiaFilter extends AbstractFilter {
         return outputBitmap;
     }
 
+    @Override
+    public String getName() {
+        return "Scepia";
+    }
+
 }

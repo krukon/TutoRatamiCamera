@@ -37,4 +37,9 @@ public class BrightnessFilter extends AbstractFilter {
 
         return outputBitmap;
     }
+
+    @Override
+    public String getName() {
+        return "Brightness";
+    }
 }

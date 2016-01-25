@@ -44,4 +44,6 @@ public abstract class AbstractFilter {
 
     public abstract Bitmap execute(byte[] data);
 
+    public abstract  String getName();
+
 }
