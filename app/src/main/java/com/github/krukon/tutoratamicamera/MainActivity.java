@@ -16,6 +16,7 @@ import com.github.krukon.tutoratamicamera.camera.CameraService;
 import com.github.krukon.tutoratamicamera.effects.AbstractFilter;
 import com.github.krukon.tutoratamicamera.effects.BlurFilter;
 import com.github.krukon.tutoratamicamera.effects.EdgeFilter;
+import com.github.krukon.tutoratamicamera.effects.BrightnessFilter;
 import com.github.krukon.tutoratamicamera.effects.MonochromeFilter;
 import com.github.krukon.tutoratamicamera.effects.NegativeFilter;
 import com.github.krukon.tutoratamicamera.effects.NormalFilter;
@@ -54,6 +55,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         filters.add(new NormalFilter(imageWidth, imageHeight, this));
         filters.add(new BlurFilter(imageWidth, imageHeight, this));
         filters.add(new TresholdFilter(imageWidth, imageHeight, this));
+        filters.add(new BrightnessFilter(imageWidth, imageHeight, this));
 
         outputImageView = (ImageView) findViewById(R.id.outputImageView);
         SurfaceView surView = (SurfaceView) findViewById(R.id.inputSurfaceView);
