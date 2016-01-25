@@ -1,8 +1,13 @@
 apply plugin: 'com.android.application'
 
 android {
+<<<<<<< HEAD
     compileSdkVersion 19
     buildToolsVersion "23.0.1"
+=======
+    compileSdkVersion 21
+    buildToolsVersion "21.1.2"
+>>>>>>> treshold filter
 
     defaultConfig {
         applicationId "com.github.krukon.tutoratamicamera"

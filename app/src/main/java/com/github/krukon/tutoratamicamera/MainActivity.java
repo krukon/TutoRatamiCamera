@@ -20,6 +20,7 @@ import com.github.krukon.tutoratamicamera.effects.MonochromeFilter;
 import com.github.krukon.tutoratamicamera.effects.NegativeFilter;
 import com.github.krukon.tutoratamicamera.effects.NormalFilter;
 import com.github.krukon.tutoratamicamera.effects.SepiaFilter;
+import com.github.krukon.tutoratamicamera.effects.TresholdFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -52,6 +53,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         filters.add(new SepiaFilter(imageWidth, imageHeight, this));
         filters.add(new NormalFilter(imageWidth, imageHeight, this));
         filters.add(new BlurFilter(imageWidth, imageHeight, this));
+        filters.add(new TresholdFilter(imageWidth, imageHeight, this));
 
         outputImageView = (ImageView) findViewById(R.id.outputImageView);
         SurfaceView surView = (SurfaceView) findViewById(R.id.inputSurfaceView);
