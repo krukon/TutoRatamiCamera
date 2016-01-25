@@ -34,3 +34,10 @@ proguard/
 .DS_Store
 /build
 /captures
+
+.idea/misc.xml
+.idea/misc_tmp.dupa
+.idea/vcs.xml
+TutoRatamiCamera.iml
+app/app.iml
+app/build.gradle

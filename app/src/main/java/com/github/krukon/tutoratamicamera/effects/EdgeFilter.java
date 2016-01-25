@@ -51,4 +51,9 @@ public class EdgeFilter extends AbstractFilter {
 
         return outputBitmap;
     }
+
+    @Override
+    public String getName() {
+        return "Edge";
+    }
 }
