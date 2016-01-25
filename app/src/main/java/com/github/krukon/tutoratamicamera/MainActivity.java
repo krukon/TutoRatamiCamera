@@ -15,8 +15,9 @@ import android.widget.ImageView;
 import com.github.krukon.tutoratamicamera.camera.CameraService;
 import com.github.krukon.tutoratamicamera.effects.AbstractFilter;
 import com.github.krukon.tutoratamicamera.effects.BlurFilter;
-import com.github.krukon.tutoratamicamera.effects.EdgeFilter;
 import com.github.krukon.tutoratamicamera.effects.BrightnessFilter;
+import com.github.krukon.tutoratamicamera.effects.EdgeFilter;
+import com.github.krukon.tutoratamicamera.effects.FlipFilter;
 import com.github.krukon.tutoratamicamera.effects.MonochromeFilter;
 import com.github.krukon.tutoratamicamera.effects.NegativeFilter;
 import com.github.krukon.tutoratamicamera.effects.NormalFilter;
@@ -32,6 +33,7 @@ import java.util.List;
 public class MainActivity extends Activity implements Camera.PreviewCallback, SurfaceHolder.Callback {
 
     private ImageView outputImageView;
+    private Button mNextFilterButton;
 
     private List<AbstractFilter> filters;
     private int currentFilterId;
@@ -48,28 +50,30 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
 
         filters = new ArrayList<AbstractFilter>();
-        filters.add(new EdgeFilter(imageWidth, imageHeight, this));
-        filters.add(new MonochromeFilter(imageWidth, imageHeight, this));
-        filters.add(new NegativeFilter(imageWidth, imageHeight, this));
-        filters.add(new SepiaFilter(imageWidth, imageHeight, this));
         filters.add(new NormalFilter(imageWidth, imageHeight, this));
-        filters.add(new BlurFilter(imageWidth, imageHeight, this));
-        filters.add(new TresholdFilter(imageWidth, imageHeight, this));
+        filters.add(new MonochromeFilter(imageWidth, imageHeight, this));
+        filters.add(new SepiaFilter(imageWidth, imageHeight, this));
         filters.add(new BrightnessFilter(imageWidth, imageHeight, this));
+        filters.add(new FlipFilter(imageWidth, imageHeight, this));
+        filters.add(new NegativeFilter(imageWidth, imageHeight, this));
+        filters.add(new TresholdFilter(imageWidth, imageHeight, this));
+        filters.add(new EdgeFilter(imageWidth, imageHeight, this));
+        filters.add(new BlurFilter(imageWidth, imageHeight, this));
 
         outputImageView = (ImageView) findViewById(R.id.outputImageView);
         SurfaceView surView = (SurfaceView) findViewById(R.id.inputSurfaceView);
         SurfaceHolder surHolder = surView.getHolder();
         surHolder.addCallback(this);
 
-        final Button nextFilterButton = (Button) findViewById(R.id.nextFilterButton);
-        nextFilterButton.setOnClickListener(new View.OnClickListener() {
+        mNextFilterButton = (Button) findViewById(R.id.nextFilterButton);
+        mNextFilterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 nextFilter();
-                nextFilterButton.setText(filters.get(currentFilterId).getName());
+                refreshButtonLabel();
             }
         });
+        refreshButtonLabel();
     }
 
     @Override
@@ -130,4 +134,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         CameraService.shutdownCamera();
     }
 
+    private void refreshButtonLabel() {
+        mNextFilterButton.setText(currentFilter().getName());
+    }
 }
