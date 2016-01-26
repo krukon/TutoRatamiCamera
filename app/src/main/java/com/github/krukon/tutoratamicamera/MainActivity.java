@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 
 import com.github.krukon.tutoratamicamera.camera.CameraService;
 import com.github.krukon.tutoratamicamera.effects.AbstractFilter;
@@ -76,7 +77,10 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
             }
         });
         refreshButtonLabel();
+        seekBarListeners();
     }
+
+
 
     @Override
     protected void onPause() {
@@ -138,5 +142,50 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
 
     private void refreshButtonLabel() {
         mNextFilterButton.setText(currentFilter().getName());
+    }
+
+    private void seekBarListeners() {
+        final SeekBar seekBarRed=(SeekBar) findViewById(R.id.seekBarRed);
+        final SeekBar seekBarGreen=(SeekBar) findViewById(R.id.seekBarGreen);
+        final SeekBar seekBarBlue=(SeekBar) findViewById(R.id.seekBarBlue);
+
+        seekBarRed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                System.out.println("RED " + progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        seekBarGreen.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                System.out.println("Green " + progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
+
+        seekBarBlue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                System.out.println("Blue " + progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
     }
 }

@@ -15,10 +15,36 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
+    <SeekBar
+        android:id="@+id/seekBarRed"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:progressDrawable="@drawable/progress_red">
+    </SeekBar>
+
+    <SeekBar
+        android:id="@+id/seekBarGreen"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="80dp"
+        android:progressDrawable="@drawable/progress_green">
+    </SeekBar>
+
+    <SeekBar
+        android:id="@+id/seekBarBlue"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp"
+        android:progressDrawable="@drawable/progress_blue">
+    </SeekBar>
+
+
     <Button
         android:id="@+id/nextFilterButton"
         android:layout_width="150dp"
         android:layout_height="50dp"
         android:text="Filter"
         android:layout_gravity="center_horizontal|bottom" />
+
 </FrameLayout>
