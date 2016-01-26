@@ -23,6 +23,7 @@ import com.github.krukon.tutoratamicamera.effects.NegativeFilter;
 import com.github.krukon.tutoratamicamera.effects.NormalFilter;
 import com.github.krukon.tutoratamicamera.effects.SepiaFilter;
 import com.github.krukon.tutoratamicamera.effects.TresholdFilter;
+import com.github.krukon.tutoratamicamera.effects.VignetteFilter;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         filters.add(new NormalFilter(imageWidth, imageHeight, this));
         filters.add(new MonochromeFilter(imageWidth, imageHeight, this));
         filters.add(new SepiaFilter(imageWidth, imageHeight, this));
+        filters.add(new VignetteFilter(imageWidth, imageHeight, this));
         filters.add(new BrightnessFilter(imageWidth, imageHeight, this));
         filters.add(new FlipFilter(imageWidth, imageHeight, this));
         filters.add(new NegativeFilter(imageWidth, imageHeight, this));

@@ -4,19 +4,19 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.renderscript.Allocation;
 
-import com.github.krukon.tutoratamicamera.ScriptC_sepia;
+import com.github.krukon.tutoratamicamera.ScriptC_vignette;
 
 /**
- * Created by jakub on 17.01.16.
+ * Created by krukon on 26.01.2016.
  */
-public class SepiaFilter extends AbstractFilter {
+public class VignetteFilter extends AbstractFilter {
 
-    private ScriptC_sepia script;
+    private ScriptC_vignette script;
 
-    public SepiaFilter(int imageWidth, int imageHeight, Context context) {
+    public VignetteFilter(int imageWidth, int imageHeight, Context context) {
         super(imageWidth, imageHeight, context);
 
-        script = new ScriptC_sepia(rs);
+        script = new ScriptC_vignette(rs);
         script.set_imageWidth(imageWidth);
         script.set_imageHeight(imageHeight);
         script.set_script(script);
@@ -39,7 +39,6 @@ public class SepiaFilter extends AbstractFilter {
 
     @Override
     public String getName() {
-        return "Sepia";
+        return "Vignette";
     }
-
 }
