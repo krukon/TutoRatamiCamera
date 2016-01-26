@@ -13,8 +13,8 @@ public class FlipFilter extends AbstractFilter {
 
     private ScriptC_flip script;
 
-    public FlipFilter(int imageWidth, int imageHeight, Context context) {
-        super(imageWidth, imageHeight, context);
+    public FlipFilter(int imageWidth, int imageHeight, Context context, int red, int green, int blue) {
+        super(imageWidth, imageHeight, context, red, green, blue);
 
         script = new ScriptC_flip(rs);
 

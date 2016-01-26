@@ -13,8 +13,8 @@ public class MonochromeFilter extends AbstractFilter {
 
     private ScriptC_monochrome script;
 
-    public MonochromeFilter(int imageWidth, int imageHeight, Context context) {
-        super(imageWidth, imageHeight, context);
+    public MonochromeFilter(int imageWidth, int imageHeight, Context context, int red, int green, int blue) {
+        super(imageWidth, imageHeight, context, red, green, blue);
 
         script = new ScriptC_monochrome(rs);
 

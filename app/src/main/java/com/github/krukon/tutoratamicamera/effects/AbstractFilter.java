@@ -26,7 +26,7 @@ public abstract class AbstractFilter {
     protected Allocation allocationIn;
     protected Bitmap outputBitmap;
 
-    public AbstractFilter(int imageWidth, int imageHeight, Context context) {
+    public AbstractFilter(int imageWidth, int imageHeight, Context context, int red, int green, int blue) {
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
 

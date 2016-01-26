@@ -4,13 +4,15 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.renderscript.Allocation;
 
+import com.github.krukon.tutoratamicamera.MainActivity;
+
 /**
  * Created by jakub on 17.01.16.
  */
 public class NormalFilter extends AbstractFilter {
 
-    public NormalFilter(int imageWidth, int imageHeight, Context context) {
-        super(imageWidth, imageHeight, context);
+    public NormalFilter(int imageWidth, int imageHeight, MainActivity mainActivity, int red, int green, int blue) {
+        super(imageWidth, imageHeight, mainActivity, red, green, blue);
     }
 
     @Override

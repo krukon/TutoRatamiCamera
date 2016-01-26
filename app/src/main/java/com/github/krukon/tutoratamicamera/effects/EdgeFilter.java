@@ -13,8 +13,8 @@ public class EdgeFilter extends AbstractFilter {
 
     private ScriptC_edge script;
 
-    public EdgeFilter(int imageWidth, int imageHeight, Context context) {
-        super(imageWidth, imageHeight, context);
+    public EdgeFilter(int imageWidth, int imageHeight, Context context, int red, int green, int blue) {
+        super(imageWidth, imageHeight, context, red, green, blue);
 
         script = new ScriptC_edge(rs);
         script.set_imageWidth(imageWidth);

@@ -51,17 +51,9 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
         int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
 
-        filters = new ArrayList<AbstractFilter>();
-        filters.add(new NormalFilter(imageWidth, imageHeight, this));
-        filters.add(new MonochromeFilter(imageWidth, imageHeight, this));
-        filters.add(new SepiaFilter(imageWidth, imageHeight, this));
-        filters.add(new VignetteFilter(imageWidth, imageHeight, this));
-        filters.add(new BrightnessFilter(imageWidth, imageHeight, this));
-        filters.add(new FlipFilter(imageWidth, imageHeight, this));
-        filters.add(new NegativeFilter(imageWidth, imageHeight, this));
-        filters.add(new TresholdFilter(imageWidth, imageHeight, this));
-        filters.add(new EdgeFilter(imageWidth, imageHeight, this));
-        filters.add(new BlurFilter(imageWidth, imageHeight, this));
+        addFilters(imageWidth, imageHeight, 30, 59, 11);
+
+
 
         outputImageView = (ImageView) findViewById(R.id.outputImageView);
         SurfaceView surView = (SurfaceView) findViewById(R.id.inputSurfaceView);
@@ -80,6 +72,19 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         seekBarListeners();
     }
 
+    private void addFilters(int imageWidth, int imageHeight, int red, int green, int blue) {
+        filters = new ArrayList<AbstractFilter>();
+        filters.add(new NormalFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new MonochromeFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new SepiaFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new VignetteFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new BrightnessFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new FlipFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new NegativeFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new TresholdFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new EdgeFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new BlurFilter(imageWidth, imageHeight, this, red, green, blue));
+    }
 
 
     @Override
@@ -152,7 +157,11 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         seekBarRed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                System.out.println("RED " + progress);
+
+                int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
+                int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
+
+                addFilters(imageWidth, imageHeight, seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
             }
 
             @Override
@@ -165,7 +174,10 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         seekBarGreen.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                System.out.println("Green " + progress);
+                int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
+                int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
+
+                addFilters(imageWidth, imageHeight, seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
             }
 
             @Override
@@ -178,7 +190,10 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         seekBarBlue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                System.out.println("Blue " + progress);
+                int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
+                int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
+
+                addFilters(imageWidth, imageHeight, seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
             }
 
             @Override

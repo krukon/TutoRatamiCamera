@@ -14,8 +14,8 @@ public class TresholdFilter extends AbstractFilter {
 
     private ScriptC_treshold script;
 
-    public TresholdFilter(int imageWidth, int imageHeight, Context context) {
-        super(imageWidth, imageHeight, context);
+    public TresholdFilter(int imageWidth, int imageHeight, Context context, int red, int green, int blue) {
+        super(imageWidth, imageHeight, context, red, green, blue);
 
         script = new ScriptC_treshold(rs);
         script.set_imageWidth(imageWidth);
@@ -23,6 +23,9 @@ public class TresholdFilter extends AbstractFilter {
         script.set_script(script);
         script.set_in(allocationIn);
         script.set_out(allocationOut);
+        script.set_GS_BLUE((float)blue/100);
+        script.set_GS_GREEN((float)green/100);
+        script.set_GS_RED((float)red/100);
     }
 
     @Override

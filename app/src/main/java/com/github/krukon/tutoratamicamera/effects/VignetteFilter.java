@@ -13,8 +13,8 @@ public class VignetteFilter extends AbstractFilter {
 
     private ScriptC_vignette script;
 
-    public VignetteFilter(int imageWidth, int imageHeight, Context context) {
-        super(imageWidth, imageHeight, context);
+    public VignetteFilter(int imageWidth, int imageHeight, Context context, int red, int green, int blue) {
+        super(imageWidth, imageHeight, context, red, green, blue);
 
         script = new ScriptC_vignette(rs);
         script.set_imageWidth(imageWidth);
