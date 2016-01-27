@@ -86,7 +86,6 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
 
     private void addFilters(int imageWidth, int imageHeight) {
         filters = new ArrayList<AbstractFilter>();
-        filters.add(new FaceFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new NormalFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new BlurFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new MonochromeFilter(imageWidth, imageHeight, this, bitmap));
@@ -96,6 +95,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
         filters.add(new FlipFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new NegativeFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new TresholdFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new FaceFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new EdgeFilter(imageWidth, imageHeight, this, bitmap));
     }
 
@@ -120,7 +120,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
 
     @Override
     public void onFaceDetection(Camera.Face[] faces, Camera camera) {
-        if (currentFilter() instanceof FaceFilter) {
+        if (!rendering && currentFilter() instanceof FaceFilter) {
             FaceFilter faceFilter = (FaceFilter) currentFilter();
             faceFilter.setFaces(faces);
         }
@@ -174,7 +174,6 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
             CameraService.getCamera().setPreviewCallback(this);
             CameraService.getCamera().setPreviewDisplay(holder);
             CameraService.getCamera().setFaceDetectionListener(this);
-            CameraService.getCamera().startFaceDetection();
             CameraService.getCamera().startPreview();
         } catch (IOException e) {
             e.printStackTrace();
