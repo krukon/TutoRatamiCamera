@@ -33,7 +33,7 @@ public abstract class SystemUiHider {
      * <p/>
      * This flag isn't used on newer devices because the <a
      * href="http://developer.android.com/design/patterns/actionbar.html">action
-     * bar</a>, the most important structural element of an Android app, should
+     * bar</a>, the most important structural element of an Android build, should
      * be visible and not obscured by the system UI.
      */
     public static final int FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES = 0x1;

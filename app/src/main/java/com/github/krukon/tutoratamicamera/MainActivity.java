@@ -39,6 +39,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
 
     private List<AbstractFilter> filters;
     private int currentFilterId;
+    private Bitmap bitmap;
 
     private volatile boolean rendering;
 
@@ -51,9 +52,9 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
         int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
 
-        addFilters(imageWidth, imageHeight, 30, 59, 11);
+        addFilters(imageWidth, imageHeight);
 
-
+        bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);
 
         outputImageView = (ImageView) findViewById(R.id.outputImageView);
         SurfaceView surView = (SurfaceView) findViewById(R.id.inputSurfaceView);
@@ -72,18 +73,24 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         seekBarListeners();
     }
 
-    private void addFilters(int imageWidth, int imageHeight, int red, int green, int blue) {
+    private void addFilters(int imageWidth, int imageHeight) {
         filters = new ArrayList<AbstractFilter>();
-        filters.add(new NormalFilter(imageWidth, imageHeight, this, red, green, blue));
-        filters.add(new MonochromeFilter(imageWidth, imageHeight, this, red, green, blue));
-        filters.add(new SepiaFilter(imageWidth, imageHeight, this, red, green, blue));
-        filters.add(new VignetteFilter(imageWidth, imageHeight, this, red, green, blue));
-        filters.add(new BrightnessFilter(imageWidth, imageHeight, this, red, green, blue));
-        filters.add(new FlipFilter(imageWidth, imageHeight, this, red, green, blue));
-        filters.add(new NegativeFilter(imageWidth, imageHeight, this, red, green, blue));
-        filters.add(new TresholdFilter(imageWidth, imageHeight, this, red, green, blue));
-        filters.add(new EdgeFilter(imageWidth, imageHeight, this, red, green, blue));
-        filters.add(new BlurFilter(imageWidth, imageHeight, this, red, green, blue));
+        filters.add(new NormalFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new MonochromeFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new SepiaFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new VignetteFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new BrightnessFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new FlipFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new NegativeFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new TresholdFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new EdgeFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new BlurFilter(imageWidth, imageHeight, this, bitmap));
+    }
+
+    private void setRgb(int r, int g, int b) {
+        for (AbstractFilter filter : filters) {
+            filter.setRGB(r, g, b);
+        }
     }
 
 
@@ -157,11 +164,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         seekBarRed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-                int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
-                int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
-
-                addFilters(imageWidth, imageHeight, seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
+                setRgb(seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
             }
 
             @Override
@@ -174,10 +177,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         seekBarGreen.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
-                int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
-
-                addFilters(imageWidth, imageHeight, seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
+                setRgb(seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
             }
 
             @Override
@@ -190,10 +190,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         seekBarBlue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
-                int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
-
-                addFilters(imageWidth, imageHeight, seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
+                setRgb(seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
             }
 
             @Override

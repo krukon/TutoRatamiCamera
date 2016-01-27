@@ -14,10 +14,14 @@ public class BlurFilter extends AbstractFilter {
     private ScriptIntrinsicBlur intrinsicBlur;
     private float radius = 15f;
 
-    public BlurFilter(int imageWidth, int imageHeight, Context context, int red, int green, int blue) {
-        super(imageWidth, imageHeight, context, red, green, blue);
+    public BlurFilter(int imageWidth, int imageHeight, Context mainActivity, Bitmap sharedBitmap) {
+        super(imageWidth, imageHeight, mainActivity, sharedBitmap);
         intrinsicBlur = ScriptIntrinsicBlur.create(rs, Element.U8_4(rs));
         intrinsicBlur.setRadius(radius);
+    }
+
+    @Override
+    public void setRGB(int red, int green, int blue) {
     }
 
     public BlurFilter withRadius(float radius) {

@@ -13,8 +13,8 @@ public class FlipFilter extends AbstractFilter {
 
     private ScriptC_flip script;
 
-    public FlipFilter(int imageWidth, int imageHeight, Context context, int red, int green, int blue) {
-        super(imageWidth, imageHeight, context, red, green, blue);
+    public FlipFilter(int imageWidth, int imageHeight, Context mainActivity, Bitmap sharedBitmap) {
+        super(imageWidth, imageHeight, mainActivity, sharedBitmap);
 
         script = new ScriptC_flip(rs);
 
@@ -23,6 +23,10 @@ public class FlipFilter extends AbstractFilter {
         script.set_script(script);
         script.set_in(allocationIn);
         script.set_out(allocationOut);
+    }
+
+    @Override
+    public void setRGB(int red, int green, int blue) {
     }
 
     @Override

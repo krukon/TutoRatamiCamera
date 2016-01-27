@@ -13,8 +13,8 @@ public class MonochromeFilter extends AbstractFilter {
 
     private ScriptC_monochrome script;
 
-    public MonochromeFilter(int imageWidth, int imageHeight, Context context, int red, int green, int blue) {
-        super(imageWidth, imageHeight, context, red, green, blue);
+    public MonochromeFilter(int imageWidth, int imageHeight, Context mainActivity, Bitmap sharedBitmap) {
+        super(imageWidth, imageHeight, mainActivity, sharedBitmap);
 
         script = new ScriptC_monochrome(rs);
 
@@ -23,6 +23,10 @@ public class MonochromeFilter extends AbstractFilter {
         script.set_script(script);
         script.set_in(allocationIn);
         script.set_out(allocationOut);
+    }
+
+    @Override
+    public void setRGB(int red, int green, int blue) {
     }
 
     @Override
