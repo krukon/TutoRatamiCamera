@@ -52,9 +52,8 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
         int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
 
-        addFilters(imageWidth, imageHeight);
-
         bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);
+        addFilters(imageWidth, imageHeight);
 
         outputImageView = (ImageView) findViewById(R.id.outputImageView);
         SurfaceView surView = (SurfaceView) findViewById(R.id.inputSurfaceView);
