@@ -9,14 +9,11 @@ rs_allocation in;
 rs_allocation out;
 rs_script script;
 
-float GS_RED = 0.3f;
-float GS_GREEN = 0.59f;
-float GS_BLUE = 0.11f;
 float threshold = 0.0f;
 void root(const uchar4 *v_in, uchar4 *v_out, const void *usrData, uint32_t x, uint32_t y) {
     float4 f4 = rsUnpackColor8888(*v_in);
 
-    float val = GS_RED * f4.r + GS_GREEN * f4.g + GS_BLUE * f4.b;
+    float val = f4.r + f4.g + f4.b;
 
     val = val > threshold ? 1 : 0;
 

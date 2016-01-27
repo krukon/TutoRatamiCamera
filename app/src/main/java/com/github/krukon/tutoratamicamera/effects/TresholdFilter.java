@@ -3,6 +3,8 @@ package com.github.krukon.tutoratamicamera.effects;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.renderscript.Allocation;
+import android.view.View;
+import android.widget.SeekBar;
 
 import com.github.krukon.tutoratamicamera.ScriptC_treshold;
 
@@ -25,11 +27,7 @@ public class TresholdFilter extends AbstractFilter {
         script.set_out(allocationOut);
     }
     @Override
-    public void setRGB(int red, int green, int blue) {
-        script.set_GS_BLUE((float)blue/100);
-        script.set_GS_GREEN((float)green/100);
-        script.set_GS_RED((float)red/100);
-    }
+    public void setRGB(int red, int green, int blue) {}
 
     @Override
     public Bitmap execute(byte[] data) {
@@ -47,5 +45,15 @@ public class TresholdFilter extends AbstractFilter {
     @Override
     public String getName() {
         return "Treshold";
+    }
+
+    @Override
+    public void setTreshold(int treshold) {
+        script.set_threshold((float) treshold/100);
+    }
+
+    @Override
+    public void setTresholdVisible(SeekBar t) {
+        t.setVisibility(View.VISIBLE);
     }
 }

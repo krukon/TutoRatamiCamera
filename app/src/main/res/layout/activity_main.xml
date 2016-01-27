@@ -39,6 +39,13 @@
         android:progressDrawable="@drawable/progress_blue">
     </SeekBar>
 
+    <SeekBar
+        android:id="@+id/seekBarTreshold"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="110dp">
+    </SeekBar>
+
 
     <Button
         android:id="@+id/nextFilterButton"

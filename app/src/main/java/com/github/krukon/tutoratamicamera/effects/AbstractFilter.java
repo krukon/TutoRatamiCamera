@@ -56,4 +56,10 @@ public abstract class AbstractFilter {
         b.setVisibility(View.INVISIBLE);
     }
 
+    public void setTresholdVisible(SeekBar t) {
+        t.setVisibility(View.INVISIBLE);
+    }
+
+    public void setTreshold(int treshold) {}
+
 }

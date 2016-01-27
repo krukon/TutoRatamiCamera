@@ -46,6 +46,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
     private SeekBar r;
     private SeekBar g;
     private SeekBar b;
+    private SeekBar t;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,6 +60,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         r = (SeekBar) findViewById(R.id.seekBarRed);
         g = (SeekBar) findViewById(R.id.seekBarGreen);
         b = (SeekBar) findViewById(R.id.seekBarBlue);
+        t = (SeekBar) findViewById(R.id.seekBarTreshold);
 
         bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);
         addFilters(imageWidth, imageHeight);
@@ -78,7 +80,8 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         });
         refreshButtonLabel();
         seekBarListeners();
-        filters.get(currentFilterId).setRgbVisible(r,g,b);
+        filters.get(currentFilterId).setRgbVisible(r, g, b);
+        filters.get(currentFilterId).setTresholdVisible(t);
     }
 
     private void addFilters(int imageWidth, int imageHeight) {
@@ -98,6 +101,12 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
     private void setRgb(int r, int g, int b) {
         for (AbstractFilter filter : filters) {
             filter.setRGB(r, g, b);
+        }
+    }
+
+    private void setTreshold(int progress) {
+        for (AbstractFilter filter : filters) {
+            filter.setTreshold(progress);
         }
     }
 
@@ -139,6 +148,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
     private void nextFilter() {
         ++currentFilterId;
         filters.get(currentFilterId).setRgbVisible(r,g,b);
+        filters.get(currentFilterId).setTresholdVisible(t);
         if (filters.size() == currentFilterId) currentFilterId = 0;
     }
 
@@ -205,5 +215,22 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
+
+        t.setOnSeekBarChangeListener((new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setTreshold(t.getProgress());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        }));
     }
+
+
 }
