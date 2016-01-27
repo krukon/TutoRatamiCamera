@@ -8,6 +8,8 @@ import android.renderscript.Element;
 import android.renderscript.RenderScript;
 import android.renderscript.ScriptIntrinsicYuvToRGB;
 import android.renderscript.Type;
+import android.view.View;
+import android.widget.SeekBar;
 
 /**
  * Created by jakub on 15.01.16.
@@ -47,5 +49,17 @@ public abstract class AbstractFilter {
     public abstract Bitmap execute(byte[] data);
 
     public abstract  String getName();
+
+    public void setRgbVisible(SeekBar r, SeekBar g, SeekBar b) {
+        r.setVisibility(View.INVISIBLE);
+        g.setVisibility(View.INVISIBLE);
+        b.setVisibility(View.INVISIBLE);
+    }
+
+    public void setTresholdVisible(SeekBar t) {
+        t.setVisibility(View.INVISIBLE);
+    }
+
+    public void setTreshold(int treshold) {}
 
 }

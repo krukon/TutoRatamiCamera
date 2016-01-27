@@ -26,9 +26,6 @@ public class NegativeFilter extends AbstractFilter {
 
     @Override
     public void setRGB(int red, int green, int blue) {
-        script.set_GS_BLUE((float)blue/100);
-        script.set_GS_GREEN((float)green/100);
-        script.set_GS_RED((float)red/100);
     }
 
     @Override

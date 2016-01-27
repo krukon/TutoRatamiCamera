@@ -3,6 +3,8 @@ package com.github.krukon.tutoratamicamera.effects;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.renderscript.Allocation;
+import android.view.View;
+import android.widget.SeekBar;
 
 import com.github.krukon.tutoratamicamera.ScriptC_sepia;
 
@@ -26,9 +28,9 @@ public class SepiaFilter extends AbstractFilter {
 
     @Override
     public void setRGB(int red, int green, int blue) {
-        script.set_GS_BLUE((float)blue/100);
-        script.set_GS_GREEN((float)green/100);
-        script.set_GS_RED((float)red/100);
+        script.set_GS_BLUE((float) blue / 100);
+        script.set_GS_GREEN((float) green / 100);
+        script.set_GS_RED((float) red / 100);
     }
 
     @Override
@@ -47,6 +49,13 @@ public class SepiaFilter extends AbstractFilter {
     @Override
     public String getName() {
         return "Sepia";
+    }
+
+    @Override
+    public void setRgbVisible(SeekBar r, SeekBar g, SeekBar b) {
+        r.setVisibility(View.VISIBLE);
+        g.setVisibility(View.VISIBLE);
+        b.setVisibility(View.VISIBLE);
     }
 
 }

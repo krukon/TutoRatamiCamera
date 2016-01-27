@@ -1,6 +1,7 @@
 package com.github.krukon.tutoratamicamera;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.AsyncTask;
@@ -43,6 +44,10 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
     private Bitmap bitmap;
 
     private volatile boolean rendering;
+    private SeekBar r;
+    private SeekBar g;
+    private SeekBar b;
+    private SeekBar t;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +57,11 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
 
         int imageWidth = CameraService.getCamera().getParameters().getPreviewSize().width;
         int imageHeight = CameraService.getCamera().getParameters().getPreviewSize().height;
+
+        r = (SeekBar) findViewById(R.id.seekBarRed);
+        g = (SeekBar) findViewById(R.id.seekBarGreen);
+        b = (SeekBar) findViewById(R.id.seekBarBlue);
+        t = (SeekBar) findViewById(R.id.seekBarTreshold);
 
         bitmap = Bitmap.createBitmap(imageWidth, imageHeight, Bitmap.Config.ARGB_8888);
         addFilters(imageWidth, imageHeight);
@@ -71,6 +81,8 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
         });
         refreshButtonLabel();
         seekBarListeners();
+        filters.get(currentFilterId).setRgbVisible(r, g, b);
+        filters.get(currentFilterId).setTresholdVisible(t);
     }
 
     private void addFilters(int imageWidth, int imageHeight) {
@@ -91,6 +103,12 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
     private void setRgb(int r, int g, int b) {
         for (AbstractFilter filter : filters) {
             filter.setRGB(r, g, b);
+        }
+    }
+
+    private void setTreshold(int progress) {
+        for (AbstractFilter filter : filters) {
+            filter.setTreshold(progress);
         }
     }
 
@@ -139,6 +157,8 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
 
     private void nextFilter() {
         ++currentFilterId;
+        filters.get(currentFilterId).setRgbVisible(r,g,b);
+        filters.get(currentFilterId).setTresholdVisible(t);
         if (filters.size() == currentFilterId) currentFilterId = 0;
 
         if (currentFilter() instanceof FaceFilter) {
@@ -174,14 +194,11 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
     }
 
     private void seekBarListeners() {
-        final SeekBar seekBarRed=(SeekBar) findViewById(R.id.seekBarRed);
-        final SeekBar seekBarGreen=(SeekBar) findViewById(R.id.seekBarGreen);
-        final SeekBar seekBarBlue=(SeekBar) findViewById(R.id.seekBarBlue);
 
-        seekBarRed.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        r.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setRgb(seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
+                setRgb(r.getProgress(), g.getProgress(), b.getProgress());
             }
 
             @Override
@@ -191,10 +208,10 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        seekBarGreen.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        g.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setRgb(seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
+                setRgb(r.getProgress(), g.getProgress(), b.getProgress());
             }
 
             @Override
@@ -204,10 +221,10 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
 
-        seekBarBlue.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+        b.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setRgb(seekBarRed.getProgress(), seekBarGreen.getProgress(), seekBarBlue.getProgress());
+                setRgb(r.getProgress(), g.getProgress(), b.getProgress());
             }
 
             @Override
@@ -216,5 +233,22 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Ca
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {}
         });
+
+        t.setOnSeekBarChangeListener((new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setTreshold(t.getProgress());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+            }
+        }));
     }
+
+
 }
