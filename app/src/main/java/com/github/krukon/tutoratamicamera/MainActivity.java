@@ -18,6 +18,7 @@ import com.github.krukon.tutoratamicamera.effects.AbstractFilter;
 import com.github.krukon.tutoratamicamera.effects.BlurFilter;
 import com.github.krukon.tutoratamicamera.effects.BrightnessFilter;
 import com.github.krukon.tutoratamicamera.effects.EdgeFilter;
+import com.github.krukon.tutoratamicamera.effects.FaceFilter;
 import com.github.krukon.tutoratamicamera.effects.FlipFilter;
 import com.github.krukon.tutoratamicamera.effects.MonochromeFilter;
 import com.github.krukon.tutoratamicamera.effects.NegativeFilter;
@@ -32,7 +33,7 @@ import java.util.List;
 
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends Activity implements Camera.PreviewCallback, SurfaceHolder.Callback {
+public class MainActivity extends Activity implements Camera.PreviewCallback, Camera.FaceDetectionListener, SurfaceHolder.Callback {
 
     private ImageView outputImageView;
     private Button mNextFilterButton;
@@ -74,6 +75,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
 
     private void addFilters(int imageWidth, int imageHeight) {
         filters = new ArrayList<AbstractFilter>();
+        filters.add(new FaceFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new NormalFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new MonochromeFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new SepiaFilter(imageWidth, imageHeight, this, bitmap));
@@ -97,6 +99,14 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
     protected void onPause() {
         super.onPause();
         CameraService.shutdownCamera();
+    }
+
+    @Override
+    public void onFaceDetection(Camera.Face[] faces, Camera camera) {
+        if (currentFilter() instanceof FaceFilter) {
+            FaceFilter faceFilter = (FaceFilter) currentFilter();
+            faceFilter.setFaces(faces);
+        }
     }
 
     private class ProcessData extends AsyncTask<byte[], Void, Boolean> {
@@ -130,6 +140,12 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
     private void nextFilter() {
         ++currentFilterId;
         if (filters.size() == currentFilterId) currentFilterId = 0;
+
+        if (currentFilter() instanceof FaceFilter) {
+            CameraService.getCamera().startFaceDetection();
+        } else {
+            CameraService.getCamera().stopFaceDetection();
+        }
     }
 
     @Override
@@ -137,6 +153,8 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         try {
             CameraService.getCamera().setPreviewCallback(this);
             CameraService.getCamera().setPreviewDisplay(holder);
+            CameraService.getCamera().setFaceDetectionListener(this);
+            CameraService.getCamera().startFaceDetection();
             CameraService.getCamera().startPreview();
         } catch (IOException e) {
             e.printStackTrace();
