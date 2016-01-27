@@ -1,7 +1,6 @@
 package com.github.krukon.tutoratamicamera;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.os.AsyncTask;
@@ -87,6 +86,7 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
     private void addFilters(int imageWidth, int imageHeight) {
         filters = new ArrayList<AbstractFilter>();
         filters.add(new NormalFilter(imageWidth, imageHeight, this, bitmap));
+        filters.add(new BlurFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new MonochromeFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new SepiaFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new VignetteFilter(imageWidth, imageHeight, this, bitmap));
@@ -95,7 +95,6 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
         filters.add(new NegativeFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new TresholdFilter(imageWidth, imageHeight, this, bitmap));
         filters.add(new EdgeFilter(imageWidth, imageHeight, this, bitmap));
-        filters.add(new BlurFilter(imageWidth, imageHeight, this, bitmap));
     }
 
     private void setRgb(int r, int g, int b) {
@@ -147,9 +146,10 @@ public class MainActivity extends Activity implements Camera.PreviewCallback, Su
 
     private void nextFilter() {
         ++currentFilterId;
+        if (filters.size() == currentFilterId) currentFilterId = 0;
+
         filters.get(currentFilterId).setRgbVisible(r,g,b);
         filters.get(currentFilterId).setTresholdVisible(t);
-        if (filters.size() == currentFilterId) currentFilterId = 0;
     }
 
     @Override
